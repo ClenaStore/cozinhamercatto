@@ -47,28 +47,45 @@ p{font-size:.9rem;color:#94a3b8;margin-top:12px}
   </div>
 
 <script>
-const DESTINO = "reservas.html"; // página inicial após login
+const DESTINO = "reservas.html";
+let SENHA = null;
 
-// 🔒 senha será injetada automaticamente pela Vercel via variável de ambiente
-// no ambiente Vercel, você criará a variável: SENHA_COZINHA
-// e o build substituirá este valor (ex: usando process.env.SENHA_COZINHA)
-const SENHA = window?.env?.SENHA_COZINHA || "COLOQUE_SENHA_ENV";
-
-// se já estiver logado, vai direto
+// verifica se já está logado
 if(localStorage.getItem("acessoCozinha")==="ok"){
   window.location.href = DESTINO;
 }
 
+// busca senha da Vercel
+fetch("/api/env")
+  .then(r => r.json())
+  .then(env => {
+    SENHA = env.SENHA_COZINHA;
+  })
+  .catch(() => {
+    document.getElementById("error").textContent = "Erro ao carregar credenciais.";
+    document.getElementById("error").style.display = "block";
+  });
+
 document.getElementById("entrarBtn").addEventListener("click", ()=>{
-  const s = document.getElementById("senhaInput").value.trim();
+  const input = document.getElementById("senhaInput");
+  const s = input.value.trim();
+
+  if(!SENHA){
+    document.getElementById("error").textContent = "Servidor ainda não carregou a senha.";
+    document.getElementById("error").style.display = "block";
+    return;
+  }
+
   if(s === SENHA){
     localStorage.setItem("acessoCozinha","ok");
     window.location.href = DESTINO;
   } else {
+    document.getElementById("error").textContent = "Senha incorreta";
     document.getElementById("error").style.display = "block";
-    document.getElementById("senhaInput").value = "";
+    input.value = "";
   }
 });
 </script>
+
 </body>
 </html>
