@@ -2,8 +2,8 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>📅 Calendário de Reservas • Cozinha</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>📅 Reservas • Cozinha</title>
 <style>
 :root{
   --bg:#0b0f19;--card:#151d2f;--text:#f8fafc;--muted:#94a3b8;--line:#243043;
@@ -13,45 +13,159 @@
 body{
   font-family:Inter,system-ui,sans-serif;
   background:linear-gradient(180deg,#0a0f1b,#0b0f19 80%);
-  color:var(--text);min-height:100vh;padding:20px;
+  color:var(--text);
+  min-height:100vh;
   display:flex;flex-direction:column;align-items:center;
+  padding:16px;
 }
-h1{color:var(--accent);margin-bottom:20px;text-align:center}
+h1{
+  color:var(--accent);
+  margin-bottom:14px;
+  font-size:clamp(1.2rem,4vw,1.8rem);
+  text-align:center;
+  letter-spacing:.2px;
+}
 .card{
-  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
-  padding:16px;max-width:1000px;width:100%;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:16px;
+  width:100%;
+  max-width:1000px;
+  box-shadow:0 8px 30px rgba(0,0,0,.45);
 }
-.cal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-.cal-title{font-weight:900}
-.toolbar{display:flex;gap:6px}
-.btn{background:#0f172a;color:var(--text);border:1px dashed var(--line);padding:6px 10px;border-radius:8px;cursor:pointer}
+.cal-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:12px;
+  flex-wrap:wrap;
+  gap:10px;
+}
+.cal-title{
+  font-weight:900;
+  font-size:1.1rem;
+}
+.toolbar{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+.btn{
+  background:#0f172a;
+  color:var(--text);
+  border:1px dashed var(--line);
+  padding:8px 12px;
+  border-radius:10px;
+  cursor:pointer;
+  font-size:.9rem;
+  font-weight:600;
+  transition:.15s;
+}
 .btn:hover{border-color:var(--accent)}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
-.cal-dow{font-size:.9rem;color:var(--muted);text-align:center}
-.cal-day{border:1px solid var(--line);border-radius:10px;min-height:100px;padding:8px;position:relative;transition:.15s}
-.cal-day:hover{transform:translateY(-2px);border-color:var(--accent)}
-.cal-day.out{opacity:.4}
-.num{font-weight:700}
-.tags{position:absolute;bottom:6px;left:6px;right:6px;display:flex;flex-wrap:wrap;gap:4px}
-.tag{font-size:.7rem;padding:3px 6px;border-radius:999px;background:#0f172a;border:1px solid var(--line)}
+.cal-grid{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:6px;
+}
+@media(max-width:700px){
+  .cal-grid{gap:4px}
+}
+.cal-dow{
+  font-size:.8rem;
+  color:var(--muted);
+  text-align:center;
+}
+.cal-day{
+  border:1px solid var(--line);
+  border-radius:10px;
+  min-height:80px;
+  padding:6px;
+  position:relative;
+  transition:.15s;
+  background:rgba(15,23,42,.8);
+  overflow:hidden;
+}
+.cal-day:hover{
+  transform:translateY(-2px);
+  border-color:var(--accent);
+}
+.cal-day.out{opacity:.35}
+.num{font-weight:700;font-size:.95rem}
+.tags{
+  position:absolute;
+  bottom:6px;
+  left:6px;
+  right:6px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:3px;
+}
+.tag{
+  font-size:.7rem;
+  padding:3px 6px;
+  border-radius:999px;
+  background:#0f172a;
+  border:1px solid var(--line);
+  white-space:nowrap;
+}
 .t-pend{background:#3c2a07;color:#ffcd73}
 .t-done{background:#0e2a12;color:#9ef7b8}
 .t-vip{background:#0b274a;color:#86baff}
 .t-outros{background:#3a230e;color:#ffbf86}
+.alert{
+  margin-top:16px;
+  font-size:.9rem;
+  color:#ffb347;
+  text-align:center;
+}
 
-/* Modal */
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:flex-end;backdrop-filter:blur(3px)}
+/* ===== MODAL ===== */
+.modal{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.6);
+  display:none;
+  align-items:flex-end;
+  justify-content:center;
+  backdrop-filter:blur(3px);
+  z-index:20;
+}
 .modal.show{display:flex}
-.sheet{background:#151d2f;width:100%;max-height:80vh;overflow:auto;border-radius:16px 16px 0 0;border:1px solid var(--line)}
-.sheet h3{margin:16px;color:var(--accent2)}
-.res-item{border:1px solid var(--line);border-radius:10px;padding:10px;margin:10px;background:#0f172a}
-.res-item .name{font-weight:700}
-.res-item .meta{font-size:.9rem;color:var(--muted)}
-.alert{margin-top:20px;font-size:.9rem;color:#ffb347;text-align:center}
+.sheet{
+  background:#151d2f;
+  width:100%;
+  max-width:600px;
+  max-height:80vh;
+  overflow:auto;
+  border-radius:16px 16px 0 0;
+  border:1px solid var(--line);
+  box-shadow:0 -10px 30px rgba(0,0,0,.5);
+  animation:slideUp .3s ease;
+}
+@keyframes slideUp{
+  from{transform:translateY(100%)}
+  to{transform:translateY(0)}
+}
+.sheet h3{
+  margin:16px;
+  color:var(--accent2);
+  font-size:1.1rem;
+  text-align:center;
+}
+.res-item{
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:10px;
+  margin:10px;
+  background:#0f172a;
+}
+.res-item .name{font-weight:700;font-size:1rem;margin-bottom:4px}
+.res-item .meta{font-size:.9rem;color:var(--muted);line-height:1.3}
 </style>
 </head>
 <body>
-<h1>📅 Calendário de Reservas</h1>
+<h1>📅 Reservas • Cozinha</h1>
+
 <div class="card">
   <div class="cal-head">
     <div class="cal-title" id="calTitle">Carregando...</div>
@@ -64,6 +178,7 @@ h1{color:var(--accent);margin-bottom:20px;text-align:center}
   <div class="cal-grid" id="calDow"></div>
   <div class="cal-grid" id="calGrid"></div>
 </div>
+
 <div id="alert" class="alert"></div>
 
 <div class="modal" id="dayModal">
@@ -95,21 +210,15 @@ const alertBox=$('#alert');
 /* ===== Funções ===== */
 function parseDataHora(v){
   if(!v) return null;
-  if(v.includes('/')){ // dd/mm/yyyy hh:mm
-    const [data,hora] = v.split(' ');
-    const [dia,mes,ano]=data.split('/');
-    return new Date(`${ano}-${mes}-${dia}T${hora||'00:00'}`);
-  }
+  if(v.includes('/')){const [data,hora]=v.split(' ');const [dia,mes,ano]=data.split('/');return new Date(`${ano}-${mes}-${dia}T${hora||'00:00'}`);}
   return new Date(v);
 }
 
 async function listar(ano,mes){
   const url=`${endpoint}?acao=listar&ano=${ano}&mes=${mes+1}`;
-  console.log("Buscando:",url);
   try{
     const res=await fetch(url);
     const data=await res.json();
-    console.log("Dados recebidos:",data);
     if(Array.isArray(data)&&data.length){
       alertBox.textContent="";
       return data;
@@ -118,7 +227,6 @@ async function listar(ano,mes){
       return [];
     }
   }catch(e){
-    console.error("Erro:",e);
     alertBox.textContent="❌ Erro ao carregar dados do servidor.";
     return [];
   }
