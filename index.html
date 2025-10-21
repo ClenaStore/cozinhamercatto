@@ -50,17 +50,15 @@ p{font-size:.9rem;color:#94a3b8;margin-top:12px}
 const DESTINO = "reservas.html";
 let SENHA = null;
 
-// verifica se já está logado
+// Se já estiver logado, redireciona automaticamente
 if(localStorage.getItem("acessoCozinha")==="ok"){
   window.location.href = DESTINO;
 }
 
-// busca senha da Vercel
+// Busca a senha do backend (Vercel)
 fetch("/api/env")
   .then(r => r.json())
-  .then(env => {
-    SENHA = env.SENHA_COZINHA;
-  })
+  .then(env => { SENHA = env.SENHA_COZINHA; })
   .catch(() => {
     document.getElementById("error").textContent = "Erro ao carregar credenciais.";
     document.getElementById("error").style.display = "block";
@@ -86,6 +84,5 @@ document.getElementById("entrarBtn").addEventListener("click", ()=>{
   }
 });
 </script>
-
 </body>
 </html>
