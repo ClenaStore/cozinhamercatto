@@ -103,12 +103,12 @@ h1{color:var(--accent);font-weight:900;font-size:1.8rem;margin:0}
 </div>
 
 <script>
-// 🔒 Proteção de acesso
+// Proteção de acesso
 if(localStorage.getItem("acessoCozinha")!=="ok"){
   window.location.href = "index.html";
 }
 
-/* ========== CALENDÁRIO ========== */
+// Calendário
 const endpoint="https://script.google.com/macros/s/AKfycbwE-0oOl4wGHz7gFXHIgYHNihCTW4-uzUjGv_iLvPSWX1sma8pi9eJIwx1K4grFOILj/exec";
 const $=(s,el=document)=>el.querySelector(s);
 const ymd=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
