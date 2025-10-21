@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🍳 Cozinha • Acesso Restrito</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b0f19;--card:#151d2f;--text:#f8fafc;--line:#243043;
+  --accent:#ff8f1f;--accent2:#ffb347;
+  --radius:14px;--shadow:0 8px 20px rgba(0,0,0,.45);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;display:flex;align-items:center;justify-content:center;
+  height:100vh;font-family:'Inter',sans-serif;
+  background:linear-gradient(180deg,#0b0f19,#111726);
+  color:var(--text);
+}
+.card{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:40px 30px;text-align:center;max-width:340px;width:90%;
+}
+h1{color:var(--accent);margin:0 0 20px;font-size:1.6rem;font-weight:700}
+input{
+  width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--line);
+  background:#0f172a;color:var(--text);font-size:1rem;margin-bottom:16px;outline:none;
+}
+button{
+  width:100%;padding:12px;border:0;border-radius:999px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  color:#000;font-weight:700;cursor:pointer;box-shadow:0 6px 18px rgba(255,143,31,.25);
+}
+button:hover{filter:brightness(1.05)}
+p{font-size:.9rem;color:#94a3b8;margin-top:12px}
+#error{color:#ef4444;font-weight:600;margin-top:10px;display:none}
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>🍳 Cozinha</h1>
+    <p>Acesso restrito — informe a senha</p>
+    <input type="password" id="senhaInput" placeholder="Senha de acesso">
+    <button id="entrarBtn">Entrar</button>
+    <div id="error">Senha incorreta</div>
+  </div>
+
+<script>
+const DESTINO = "reservas.html"; // página inicial após login
+
+// 🔒 senha será injetada automaticamente pela Vercel via variável de ambiente
+// no ambiente Vercel, você criará a variável: SENHA_COZINHA
+// e o build substituirá este valor (ex: usando process.env.SENHA_COZINHA)
+const SENHA = window?.env?.SENHA_COZINHA || "COLOQUE_SENHA_ENV";
+
+// se já estiver logado, vai direto
+if(localStorage.getItem("acessoCozinha")==="ok"){
+  window.location.href = DESTINO;
+}
+
+document.getElementById("entrarBtn").addEventListener("click", ()=>{
+  const s = document.getElementById("senhaInput").value.trim();
+  if(s === SENHA){
+    localStorage.setItem("acessoCozinha","ok");
+    window.location.href = DESTINO;
+  } else {
+    document.getElementById("error").style.display = "block";
+    document.getElementById("senhaInput").value = "";
+  }
+});
+</script>
+</body>
+</html>
