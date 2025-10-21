@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Calendário de Reservas • Mercatto Delícia</title>
+<meta name="viewport" content="width=device-width,initial-scale=1, user-scalable=no">
+<meta name="color-scheme" content="dark light">
+<style>
+:root{
+  --bg:#0b0f19;--card:#151d2f;--text:#f8fafc;--muted:#94a3b8;--line:#243043;
+  --accent:#ff8f1f;--accent2:#ffb347;
+  --vip:#0b274a;--pend:#3c2a07;--done:#0e2a12;--outros:#3a230e;
+  --radius:16px;--shadow:0 12px 30px rgba(0,0,0,.45);
+}
+*{box-sizing:border-box}
+body,html{margin:0;height:100%;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--text);background:#0b0f19}
+.center{
+  display:flex;align-items:center;justify-content:center;flex-direction:column;
+  height:100vh;text-align:center;gap:20px;
+}
+input[type=password]{
+  padding:12px 16px;border-radius:12px;border:1px solid var(--line);
+  background:#151d2f;color:var(--text);font-size:1rem;min-width:260px;
+}
+button{
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  border:0;border-radius:999px;padding:10px 20px;font-weight:700;cursor:pointer;
+  color:#000;box-shadow:0 6px 18px rgba(255,143,31,.25);
+}
+header{text-align:center;margin:20px 0}
+h1{color:var(--accent);font-weight:900;font-size:1.8rem;margin:0}
+.card{
+  background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,0));
+  border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:var(--shadow);backdrop-filter:saturate(120%) blur(6px);
+  max-width:1000px;width:calc(100% - 20px);margin:auto;
+}
+.card-head{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:16px 18px;border-bottom:1px dashed var(--line);
+  background:linear-gradient(90deg, rgba(255,143,31,.10), rgba(255,179,71,.08) 60%, transparent);
+}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap}
+.btn{background:#0f172a;color:var(--text);border:1px dashed var(--line);padding:8px 12px;border-radius:10px;cursor:pointer;font-weight:700}
+.btn:hover{border-color:var(--accent);box-shadow:0 0 0 2px rgba(255,143,31,.15)}
+.cal{padding:16px}
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.cal-title{font-weight:900;font-size:1.1rem}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+.cal-dow{font-size:.9rem;color:var(--muted);text-align:center;padding:6px 0}
+.cal-day{
+  background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,0));
+  border:1px solid var(--line);border-radius:14px;
+  padding:12px;min-height:110px;position:relative;cursor:pointer;
+  transition:.12s transform ease, .12s box-shadow ease, .12s border-color ease;
+}
+.cal-day:hover{transform:translateY(-2px);box-shadow:0 10px 20px rgba(0,0,0,.25);border-color:rgba(255,143,31,.55)}
+.cal-day.out{opacity:.45}
+.cal-day .num{font-weight:900;font-size:1.05rem}
+.cal-day .tags{position:absolute;bottom:10px;left:10px;right:10px;display:flex;gap:6px;flex-wrap:wrap}
+.tag{font-size:.78rem;padding:4px 8px;border-radius:999px;border:1px solid var(--line);background:#0f172a;color:#cdd6e3}
+.t-pend{background:var(--pend);color:#ffcd73}
+.t-done{background:var(--done);color:#9ef7b8}
+.t-vip{background:var(--vip);color:#86baff}
+.t-outros{background:var(--outros);color:#ffbf86}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:flex-end;z-index:50;backdrop-filter:blur(3px)}
+.modal.show{display:flex}
+.sheet{
+  background:linear-gradient(180deg,#0f172a,#0b1220);
+  width:100%;max-height:80vh;border-radius:18px 18px 0 0;
+  box-shadow:0 -10px 30px rgba(0,0,0,.5);overflow:auto;border:1px solid #1f2937;
+}
+.sheet h3{margin:14px 16px;color:#ffb347}
+.list{padding:0 16px 16px}
+.res-item{
+  border:1px solid var(--line);border-radius:12px;padding:10px;margin-bottom:10px;
+  background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.01));
+}
+.res-item .top{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.res-item .name{font-weight:800}
+.res-item .meta{font-size:.9rem;color:var(--muted)}
+.chip{border:1px solid var(--line);border-radius:999px;padding:4px 8px;font-size:.8rem;color:var(--muted)}
+</style>
+</head>
+<body>
+<div id="auth" class="center">
+  <h1>🔒 Acesso Restrito</h1>
+  <p>Digite a senha para acessar o calendário da cozinha</p>
+  <input type="password" id="senhaInput" placeholder="Senha de acesso">
+  <button id="entrarBtn">Entrar</button>
+  <p id="erro" style="color:#ef4444;display:none;font-weight:600">Senha incorreta</p>
+</div>
+
+<div id="app" style="display:none">
+  <header><h1>Calendário de Reservas</h1></header>
+  <div class="card">
+    <div class="card-head">
+      <h2>Mês Atual</h2>
+      <div class="toolbar">
+        <button id="prevMonth" class="btn">◀ Anterior</button>
+        <button id="todayBtn" class="btn">Hoje</button>
+        <button id="nextMonth" class="btn">Próximo ▶</button>
+      </div>
+    </div>
+    <div class="cal">
+      <div class="cal-head"><div class="cal-title" id="calTitle">—</div></div>
+      <div class="cal-grid" id="calDow"></div>
+      <div class="cal-grid" id="calGrid"></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="dayModal">
+  <div class="sheet">
+    <h3 id="modalTitle">Reservas do dia</h3>
+    <div class="list" id="modalList"></div>
+  </div>
+</div>
+
+<script>
+/* ======== SENHA ======== */
+const SENHA_CORRETA = "cozinha2025"; // 🔐 defina aqui
+const auth = document.getElementById("auth");
+const app = document.getElementById("app");
+const erro = document.getElementById("erro");
+const senhaInput = document.getElementById("senhaInput");
+const entrarBtn = document.getElementById("entrarBtn");
+
+if(localStorage.getItem("acessoCozinha") === "ok"){
+  auth.style.display="none";
+  app.style.display="block";
+  iniciarCalendario();
+}else{
+  entrarBtn.addEventListener("click", ()=>{
+    if(senhaInput.value === SENHA_CORRETA){
+      localStorage.setItem("acessoCozinha","ok");
+      auth.style.display="none";
+      app.style.display="block";
+      iniciarCalendario();
+    }else{
+      erro.style.display="block";
+      senhaInput.value="";
+      senhaInput.focus();
+    }
+  });
+}
+
+/* ======== CALENDÁRIO ======== */
+function iniciarCalendario(){
+  const endpoint="https://script.google.com/macros/s/AKfycbwE-0oOl4wGHz7gFXHIgYHNihCTW4-uzUjGv_iLvPSWX1sma8pi9eJIwx1K4grFOILj/exec";
+  const $=(s,el=document)=>el.querySelector(s);
+  const ymd=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  const monthNames=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  const dow=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  const calTitle=$('#calTitle'), calDow=$('#calDow'), calGrid=$('#calGrid');
+  calDow.innerHTML=dow.map(d=>`<div class='cal-dow'>${d}</div>`).join('');
+  const state={mes:(new Date()).getMonth(),ano:(new Date()).getFullYear(),reservas:[]};
+
+  async function listar(ano,mes){
+    const res=await fetch(`${endpoint}?acao=listar&ano=${ano}&mes=${mes+1}`);
+    const data=await res.json();return Array.isArray(data)?data:[];
+  }
+  function buildCalendar(){
+    const {mes,ano}=state;
+    calTitle.textContent=`${monthNames[mes]} de ${ano}`;
+    calGrid.innerHTML='';
+    const first=new Date(ano,mes,1);
+    const start=new Date(first);start.setDate(1-((first.getDay()+7)%7));
+    for(let i=0;i<42;i++){
+      const d=new Date(start);d.setDate(start.getDate()+i);
+      const inMonth=d.getMonth()===mes;
+      const cell=document.createElement('button');
+      cell.className='cal-day'+(inMonth?'':' out');
+      const items=state.reservas.filter(r=>r.datahora && ymd(new Date(r.datahora))===ymd(d));
+      const groups=new Map();
+      for(const r of items){const k=(r.mesa||'—').toUpperCase();groups.set(k,{label:r.mesa||'—',count:(groups.get(k)?.count||0)+1});}
+      const tags=[...groups.entries()].map(([k,v])=>{
+        const vip=k.includes('VIP');const css=vip?'t-vip':'t-outros';
+        return `<span class='tag ${css}'>${v.count} ${v.label}</span>`;
+      }).join('');
+      const pend=items.filter(r=>(r.status||'Pendente')!=='Concluída').length;
+      const done=items.filter(r=>r.status==='Concluída').length;
+      cell.innerHTML=`<div class='num'>${d.getDate()}</div><div class='tags'>${tags}${pend?`<span class='tag t-pend'>Pend: ${pend}</span>`:''}${done?`<span class='tag t-done'>Conc: ${done}</span>`:''}</div>`;
+      cell.addEventListener('click',()=>abrirModal(d,items));
+      calGrid.appendChild(cell);
+    }
+  }
+  function abrirModal(date,items){
+    const m=document.getElementById("dayModal");
+    const list=document.getElementById("modalList");
+    document.getElementById("modalTitle").textContent=`Reservas de ${date.toLocaleDateString('pt-BR')}`;
+    list.innerHTML=items.length?items.map(r=>`
+      <div class='res-item'>
+        <div class='top'><div><div class='name'>${r.nome||'—'}</div>
+        <div class='meta'>${new Date(r.datahora).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})} • ${r.mesa||'—'} • ${r.pessoas||'0'} pessoa(s)</div></div>
+        <span class='chip'>${r.status||'Pendente'}</span></div>
+        <div class='meta'><b>Telefone:</b> ${r.telefone||'—'}</div>
+        <div class='meta'><b>Cardápio:</b> ${r.cardapio||'—'}</div>
+        <div class='meta'><b>Obs:</b> ${r.observacoes||'—'}</div>
+      </div>`).join(''):'<div class="meta">Nenhuma reserva neste dia.</div>';
+    m.classList.add("show");
+  }
+  document.getElementById("dayModal").addEventListener("click",e=>{if(e.target.id==="dayModal")e.target.classList.remove("show")});
+  async function refreshAll(){state.reservas=await listar(state.ano,state.mes);buildCalendar();}
+  document.getElementById("prevMonth").addEventListener("click",()=>{const d=new Date(state.ano,state.mes-1);state.mes=d.getMonth();state.ano=d.getFullYear();refreshAll();});
+  document.getElementById("nextMonth").addEventListener("click",()=>{const d=new Date(state.ano,state.mes+1);state.mes=d.getMonth();state.ano=d.getFullYear();refreshAll();});
+  document.getElementById("todayBtn").addEventListener("click",()=>{const t=new Date();state.mes=t.getMonth();state.ano=t.getFullYear();refreshAll();});
+  refreshAll();
+}
+</script>
+</body>
+</html>
