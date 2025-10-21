@@ -1,0 +1,7 @@
+export default function handler(req, res) {
+  // Lê a senha secreta da variável de ambiente da Vercel
+  const senha = process.env.SENHA_COZINHA || "";
+
+  // Retorna apenas via JSON (sem expor outras envs)
+  res.status(200).json({ SENHA_COZINHA: senha });
+}
