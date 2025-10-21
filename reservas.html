@@ -1,77 +1,60 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>📅 Calendário de Reservas • Cozinha</title>
 <style>
 :root{
   --bg:#0b0f19;--card:#151d2f;--text:#f8fafc;--muted:#94a3b8;--line:#243043;
-  --accent:#ff8f1f;--accent2:#ffb347;
-  --radius:14px;--shadow:0 8px 20px rgba(0,0,0,.45);
+  --accent:#ff8f1f;--accent2:#ffb347;--radius:14px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{
   font-family:Inter,system-ui,sans-serif;
   background:linear-gradient(180deg,#0a0f1b,#0b0f19 80%);
-  color:var(--text);
-  min-height:100vh;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  padding:20px;
+  color:var(--text);min-height:100vh;padding:20px;
+  display:flex;flex-direction:column;align-items:center;
 }
-h1{color:var(--accent);margin-bottom:20px;font-weight:900;text-align:center}
+h1{color:var(--accent);margin-bottom:20px;text-align:center}
 .card{
-  background:var(--card);
-  border:1px solid var(--line);
-  border-radius:var(--radius);
-  box-shadow:var(--shadow);
-  padding:16px;
-  max-width:1000px;width:100%;
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:16px;max-width:1000px;width:100%;
 }
-.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.cal-title{font-weight:800;font-size:1.2rem}
-.toolbar{display:flex;gap:8px}
+.cal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.cal-title{font-weight:900}
+.toolbar{display:flex;gap:6px}
 .btn{background:#0f172a;color:var(--text);border:1px dashed var(--line);padding:6px 10px;border-radius:8px;cursor:pointer}
 .btn:hover{border-color:var(--accent)}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
-.cal-dow{font-size:.85rem;color:var(--muted);text-align:center;padding:4px 0}
-.cal-day{
-  background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,0));
-  border:1px solid var(--line);border-radius:10px;
-  padding:10px;min-height:100px;position:relative;cursor:pointer;
-  transition:all .15s;
-}
-.cal-day:hover{transform:translateY(-2px);box-shadow:0 6px 12px rgba(0,0,0,.3);border-color:var(--accent)}
+.cal-dow{font-size:.9rem;color:var(--muted);text-align:center}
+.cal-day{border:1px solid var(--line);border-radius:10px;min-height:100px;padding:8px;position:relative;transition:.15s}
+.cal-day:hover{transform:translateY(-2px);border-color:var(--accent)}
 .cal-day.out{opacity:.4}
-.num{font-weight:700;font-size:1rem}
-.tags{position:absolute;bottom:8px;left:6px;right:6px;display:flex;flex-wrap:wrap;gap:4px}
-.tag{font-size:.72rem;padding:3px 6px;border-radius:999px;background:#0f172a;border:1px solid var(--line)}
+.num{font-weight:700}
+.tags{position:absolute;bottom:6px;left:6px;right:6px;display:flex;flex-wrap:wrap;gap:4px}
+.tag{font-size:.7rem;padding:3px 6px;border-radius:999px;background:#0f172a;border:1px solid var(--line)}
 .t-pend{background:#3c2a07;color:#ffcd73}
 .t-done{background:#0e2a12;color:#9ef7b8}
 .t-vip{background:#0b274a;color:#86baff}
 .t-outros{background:#3a230e;color:#ffbf86}
 
 /* Modal */
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:flex-end;backdrop-filter:blur(4px);z-index:50}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:flex-end;backdrop-filter:blur(3px)}
 .modal.show{display:flex}
-.sheet{
-  background:#151d2f;width:100%;max-height:80vh;overflow:auto;
-  border-radius:16px 16px 0 0;border:1px solid var(--line);
-  box-shadow:0 -10px 30px rgba(0,0,0,.5);
-}
+.sheet{background:#151d2f;width:100%;max-height:80vh;overflow:auto;border-radius:16px 16px 0 0;border:1px solid var(--line)}
 .sheet h3{margin:16px;color:var(--accent2)}
-.res-item{border:1px solid var(--line);border-radius:12px;padding:10px;margin:10px;background:#0f172a}
+.res-item{border:1px solid var(--line);border-radius:10px;padding:10px;margin:10px;background:#0f172a}
 .res-item .name{font-weight:700}
 .res-item .meta{font-size:.9rem;color:var(--muted)}
+.alert{margin-top:20px;font-size:.9rem;color:#ffb347;text-align:center}
 </style>
 </head>
 <body>
 <h1>📅 Calendário de Reservas</h1>
 <div class="card">
   <div class="cal-head">
-    <div class="cal-title" id="calTitle">—</div>
+    <div class="cal-title" id="calTitle">Carregando...</div>
     <div class="toolbar">
       <button class="btn" id="prev">◀</button>
       <button class="btn" id="today">Hoje</button>
@@ -81,6 +64,7 @@ h1{color:var(--accent);margin-bottom:20px;font-weight:900;text-align:center}
   <div class="cal-grid" id="calDow"></div>
   <div class="cal-grid" id="calGrid"></div>
 </div>
+<div id="alert" class="alert"></div>
 
 <div class="modal" id="dayModal">
   <div class="sheet">
@@ -95,24 +79,49 @@ if(localStorage.getItem("acessoCozinha")!=="ok"){
   window.location.href="index.html";
 }
 
-/* ===== Configuração ===== */
+/* ===== Config ===== */
 const endpoint="https://script.google.com/macros/s/AKfycbwE-0oOl4wGHz7gFXHIgYHNihCTW4-uzUjGv_iLvPSWX1sma8pi9eJIwx1K4grFOILj/exec";
 const $=(s,el=document)=>el.querySelector(s);
 const monthNames=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const dow=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
 const state={mes:(new Date()).getMonth(),ano:(new Date()).getFullYear(),reservas:[]};
-
-/* ===== Funções utilitárias ===== */
 const ymd=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 
-/* ===== Construção do calendário ===== */
+/* ===== Interface ===== */
 const calTitle=$('#calTitle'),calDow=$('#calDow'),calGrid=$('#calGrid');
 calDow.innerHTML=dow.map(d=>`<div class='cal-dow'>${d}</div>`).join('');
+const alertBox=$('#alert');
+
+/* ===== Funções ===== */
+function parseDataHora(v){
+  if(!v) return null;
+  if(v.includes('/')){ // dd/mm/yyyy hh:mm
+    const [data,hora] = v.split(' ');
+    const [dia,mes,ano]=data.split('/');
+    return new Date(`${ano}-${mes}-${dia}T${hora||'00:00'}`);
+  }
+  return new Date(v);
+}
 
 async function listar(ano,mes){
-  const res=await fetch(`${endpoint}?acao=listar&ano=${ano}&mes=${mes+1}`);
-  const data=await res.json();
-  return Array.isArray(data)?data:[];
+  const url=`${endpoint}?acao=listar&ano=${ano}&mes=${mes+1}`;
+  console.log("Buscando:",url);
+  try{
+    const res=await fetch(url);
+    const data=await res.json();
+    console.log("Dados recebidos:",data);
+    if(Array.isArray(data)&&data.length){
+      alertBox.textContent="";
+      return data;
+    }else{
+      alertBox.textContent="Nenhuma reserva encontrada neste mês.";
+      return [];
+    }
+  }catch(e){
+    console.error("Erro:",e);
+    alertBox.textContent="❌ Erro ao carregar dados do servidor.";
+    return [];
+  }
 }
 
 function buildCalendar(){
@@ -125,68 +134,59 @@ function buildCalendar(){
   for(let i=0;i<42;i++){
     const d=new Date(start);d.setDate(start.getDate()+i);
     const inMonth=d.getMonth()===mes;
-    const cell=document.createElement('button');
+    const cell=document.createElement('div');
     cell.className='cal-day'+(inMonth?'':' out');
-    const items=state.reservas.filter(r=>r.datahora && ymd(new Date(r.datahora))===ymd(d));
+    const items=state.reservas.filter(r=>{
+      const dt=parseDataHora(r.datahora||r.DataHora||r.data||r.Data);
+      return dt && ymd(dt)===ymd(d);
+    });
     const groups=new Map();
     for(const r of items){
-      const k=(r.mesa||'—').toUpperCase();
-      groups.set(k,{label:r.mesa||'—',count:(groups.get(k)?.count||0)+1});
+      const k=(r.mesa||r.Mesa||'—').toUpperCase();
+      groups.set(k,{label:r.mesa||r.Mesa||'—',count:(groups.get(k)?.count||0)+1});
     }
     const tags=[...groups.entries()].map(([k,v])=>{
-      const vip=k.includes('VIP');
-      const css=vip?'t-vip':'t-outros';
+      const vip=k.includes('VIP');const css=vip?'t-vip':'t-outros';
       return `<span class='tag ${css}'>${v.count} ${v.label}</span>`;
     }).join('');
-    const pend=items.filter(r=>(r.status||'Pendente')!=='Concluída').length;
-    const done=items.filter(r=>r.status==='Concluída').length;
+    const pend=items.filter(r=>(r.status||r.Status||'Pendente')!=='Concluída').length;
+    const done=items.filter(r=>(r.status||r.Status)==='Concluída').length;
     cell.innerHTML=`<div class='num'>${d.getDate()}</div>
-      <div class='tags'>
-        ${tags}
-        ${pend?`<span class='tag t-pend'>Pend: ${pend}</span>`:''}
-        ${done?`<span class='tag t-done'>Conc: ${done}</span>`:''}
-      </div>`;
+      <div class='tags'>${tags}${pend?`<span class='tag t-pend'>Pend: ${pend}</span>`:''}${done?`<span class='tag t-done'>Conc: ${done}</span>`:''}</div>`;
     cell.addEventListener('click',()=>abrirModal(d,items));
     calGrid.appendChild(cell);
   }
 }
 
-/* ===== Modal de reservas ===== */
 function abrirModal(date,items){
-  const modal=$('#dayModal');
-  const list=$('#modalList');
+  const m=$('#dayModal'),list=$('#modalList');
   $('#modalTitle').textContent=`Reservas de ${date.toLocaleDateString('pt-BR')}`;
   if(!items.length){
     list.innerHTML="<div class='res-item'><div class='meta'>Nenhuma reserva neste dia.</div></div>";
   }else{
-    list.innerHTML=items.map(r=>`
-      <div class='res-item'>
-        <div class='name'>${r.nome||'—'}</div>
-        <div class='meta'>${new Date(r.datahora).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})} • ${r.mesa||'—'} • ${r.pessoas||'0'} pessoa(s)</div>
-        <div class='meta'><b>Cardápio:</b> ${r.cardapio||'—'}</div>
-        <div class='meta'><b>Status:</b> ${r.status||'Pendente'}</div>
-        <div class='meta'><b>Obs:</b> ${r.observacoes||'—'}</div>
-      </div>`).join('');
+    list.innerHTML=items.map(r=>{
+      const dt=parseDataHora(r.datahora||r.DataHora);
+      return `<div class='res-item'>
+        <div class='name'>${r.nome||r.Nome||'—'}</div>
+        <div class='meta'>${dt?dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}):'—'} • ${r.mesa||r.Mesa||'—'} • ${r.pessoas||r.Pessoas||'0'} pessoa(s)</div>
+        <div class='meta'><b>Status:</b> ${r.status||r.Status||'Pendente'}</div>
+        <div class='meta'><b>Cardápio:</b> ${r.cardapio||r.Cardapio||'—'}</div>
+        <div class='meta'><b>Obs:</b> ${r.observacoes||r.Observacoes||'—'}</div>
+      </div>`;
+    }).join('');
   }
-  modal.classList.add('show');
+  m.classList.add("show");
 }
-$('#dayModal').addEventListener('click',e=>{
-  if(e.target.id==='dayModal') e.target.classList.remove('show');
-});
+$('#dayModal').addEventListener('click',e=>{if(e.target.id==='dayModal')e.target.classList.remove('show')});
 
 /* ===== Navegação ===== */
 $('#prev').addEventListener('click',()=>{const d=new Date(state.ano,state.mes-1);state.mes=d.getMonth();state.ano=d.getFullYear();refresh();});
 $('#next').addEventListener('click',()=>{const d=new Date(state.ano,state.mes+1);state.mes=d.getMonth();state.ano=d.getFullYear();refresh();});
 $('#today').addEventListener('click',()=>{const t=new Date();state.mes=t.getMonth();state.ano=t.getFullYear();refresh();});
 
-/* ===== Atualização ===== */
+/* ===== Atualizar ===== */
 async function refresh(){
-  try{
-    state.reservas=await listar(state.ano,state.mes);
-  }catch(e){
-    console.error("Erro ao carregar:",e);
-    state.reservas=[];
-  }
+  state.reservas=await listar(state.ano,state.mes);
   buildCalendar();
 }
 refresh();
