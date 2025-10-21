@@ -1,136 +1,91 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<title>Painel de Reservas • Cozinha</title>
-<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-<meta name="color-scheme" content="dark light" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>📅 Calendário de Reservas • Cozinha</title>
 <style>
 :root{
   --bg:#0b0f19;--card:#151d2f;--text:#f8fafc;--muted:#94a3b8;--line:#243043;
   --accent:#ff8f1f;--accent2:#ffb347;
-  --radius:16px;--shadow:0 12px 30px rgba(0,0,0,.45);
+  --radius:14px;--shadow:0 8px 20px rgba(0,0,0,.45);
 }
-*{box-sizing:border-box}
-html,body{height:100%}
+*{box-sizing:border-box;margin:0;padding:0}
 body{
-  margin:0;
-  font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  font-family:Inter,system-ui,sans-serif;
+  background:linear-gradient(180deg,#0a0f1b,#0b0f19 80%);
   color:var(--text);
-  background:
-    radial-gradient(1000px 700px at -5% -10%, rgba(255,143,31,.10), transparent 60%),
-    radial-gradient(1000px 700px at 110% -20%, rgba(255,179,71,.10), transparent 60%),
-    linear-gradient(180deg, #0a0f1b, #0b0f19 40%, #0b0f19 100%);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:20px;
 }
-.wrap{max-width:1180px;margin:auto;padding:28px 18px 40px}
-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px}
-.title{font-size:clamp(1.2rem,2.6vw,1.8rem);font-weight:900;display:flex;align-items:center;gap:12px}
-.title::before{content:"";width:14px;height:14px;border-radius:4px;
-  background:linear-gradient(135deg,var(--accent),var(--accent2));
-  box-shadow:0 0 0 2px rgba(255,143,31,.2),0 0 24px rgba(255,143,31,.3);}
-.badge{font-size:.82rem;background:linear-gradient(90deg,var(--accent),var(--accent2));
-  color:#000;padding:6px 10px;border-radius:999px;box-shadow:var(--shadow);font-weight:800}
-
-/* CARD BASE */
+h1{color:var(--accent);margin-bottom:20px;font-weight:900;text-align:center}
 .card{
-  background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,0)) padding-box,
-             linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,0)) border-box;
-  border:1px solid var(--line);border-radius:var(--radius);
-  box-shadow:var(--shadow);backdrop-filter:saturate(120%) blur(6px);
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:16px;
+  max-width:1000px;width:100%;
 }
-.card-head{display:flex;align-items:center;justify-content:space-between;
-  padding:16px 18px;border-bottom:1px dashed var(--line);
-  background:linear-gradient(90deg,rgba(255,143,31,.10),rgba(255,179,71,.08) 60%,transparent);}
-.card-head h2{margin:0;font-size:1.05rem}
-
-/* CALENDÁRIO */
-.cal{padding:16px}
 .cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.cal-title{font-weight:900;font-size:1.1rem}
+.cal-title{font-weight:800;font-size:1.2rem}
+.toolbar{display:flex;gap:8px}
+.btn{background:#0f172a;color:var(--text);border:1px dashed var(--line);padding:6px 10px;border-radius:8px;cursor:pointer}
+.btn:hover{border-color:var(--accent)}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
-.cal-dow{font-size:.9rem;color:var(--muted);text-align:center;padding:6px 0}
-.cal-day{background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,0));
-  border:1px solid var(--line);border-radius:14px;padding:12px;min-height:120px;position:relative;
-  transition:.12s;cursor:pointer;}
-.cal-day:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(0,0,0,.25);border-color:rgba(255,143,31,.55)}
-.cal-day.out{opacity:.45}
-.cal-day .num{font-weight:900;font-size:1.05rem}
-.cal-day .tags{position:absolute;bottom:10px;left:10px;right:10px;display:flex;gap:6px;flex-wrap:wrap}
-.tag{font-size:.78rem;padding:4px 8px;border-radius:999px;border:1px solid var(--line);background:#0f172a;color:#cdd6e3}
+.cal-dow{font-size:.85rem;color:var(--muted);text-align:center;padding:4px 0}
+.cal-day{
+  background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,0));
+  border:1px solid var(--line);border-radius:10px;
+  padding:10px;min-height:100px;position:relative;cursor:pointer;
+  transition:all .15s;
+}
+.cal-day:hover{transform:translateY(-2px);box-shadow:0 6px 12px rgba(0,0,0,.3);border-color:var(--accent)}
+.cal-day.out{opacity:.4}
+.num{font-weight:700;font-size:1rem}
+.tags{position:absolute;bottom:8px;left:6px;right:6px;display:flex;flex-wrap:wrap;gap:4px}
+.tag{font-size:.72rem;padding:3px 6px;border-radius:999px;background:#0f172a;border:1px solid var(--line)}
 .t-pend{background:#3c2a07;color:#ffcd73}
 .t-done{background:#0e2a12;color:#9ef7b8}
 .t-vip{background:#0b274a;color:#86baff}
 .t-outros{background:#3a230e;color:#ffbf86}
 
-/* RESUMO */
-.summary{padding:16px;border-top:1px dashed var(--line);background:linear-gradient(180deg,rgba(255,255,255,.03),transparent)}
-.summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-@media(max-width:720px){.summary-grid{grid-template-columns:1fr}}
-.kpi{border:1px solid var(--line);border-radius:12px;padding:14px;background:#0f172a}
-.kpi .label{font-size:.9rem;color:var(--muted)}
-.kpi .value{font-size:1.4rem;font-weight:900}
-.sum-note{font-size:.82rem;color:var(--muted);margin-top:6px}
-
-/* MODAL */
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:flex-end;z-index:50;backdrop-filter:blur(3px)}
+/* Modal */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:flex-end;backdrop-filter:blur(4px);z-index:50}
 .modal.show{display:flex}
-.sheet{background:linear-gradient(180deg,#0f172a,#0b1220);width:100%;max-height:80vh;
-  border-radius:18px 18px 0 0;overflow:auto;border:1px solid #1f2937}
-.sheet h3{margin:14px 16px;color:#ffb347}
+.sheet{
+  background:#151d2f;width:100%;max-height:80vh;overflow:auto;
+  border-radius:16px 16px 0 0;border:1px solid var(--line);
+  box-shadow:0 -10px 30px rgba(0,0,0,.5);
+}
+.sheet h3{margin:16px;color:var(--accent2)}
 .res-item{border:1px solid var(--line);border-radius:12px;padding:10px;margin:10px;background:#0f172a}
-.res-item .name{font-weight:800}
+.res-item .name{font-weight:700}
 .res-item .meta{font-size:.9rem;color:var(--muted)}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <div class="title">📅 Reservas • Cozinha</div>
-    <div class="badge">Visualização • Calendário • Resumo</div>
-  </header>
-
-  <div class="card">
-    <div class="card-head">
-      <h2>Calendário de Reservas</h2>
-      <div class="toolbar">
-        <button id="prevMonth" class="btn btn-ghost">◀ Anterior</button>
-        <button id="todayBtn" class="btn btn-ghost">Hoje</button>
-        <button id="nextMonth" class="btn btn-ghost">Próximo ▶</button>
-      </div>
-    </div>
-
-    <div class="cal">
-      <div class="cal-head"><div class="cal-title" id="calTitle">—</div></div>
-      <div class="cal-grid" id="calDow"></div>
-      <div class="cal-grid" id="calGrid"></div>
-    </div>
-
-    <div class="summary">
-      <h3 style="margin:0 0 6px;color:var(--muted)">Resumo do mês</h3>
-      <div class="summary-grid">
-        <div class="kpi"><div class="label">Antecipado (mês)</div><div class="value" id="kpiAntecipado">R$ 0,00</div></div>
-        <div class="kpi"><div class="label">Final pago (mês)</div><div class="value" id="kpiFinalPago">R$ 0,00</div></div>
-        <div class="kpi">
-          <div class="label">A receber</div>
-          <div class="value" id="kpiAReceber">R$ 0,00</div>
-          <div class="sum-note">* Soma sem incluir valores pendentes.</div>
-        </div>
-      </div>
-      <div class="summary-grid" style="margin-top:12px">
-        <div class="kpi" style="grid-column:1/-1;display:flex;align-items:center;justify-content:space-between">
-          <div><div class="label">Total do mês</div><div class="value" id="kpiTotalMes">R$ 0,00</div></div>
-          <button id="refreshBtn" class="btn btn-ghost" style="width:auto">Atualizar</button>
-        </div>
-      </div>
+<h1>📅 Calendário de Reservas</h1>
+<div class="card">
+  <div class="cal-head">
+    <div class="cal-title" id="calTitle">—</div>
+    <div class="toolbar">
+      <button class="btn" id="prev">◀</button>
+      <button class="btn" id="today">Hoje</button>
+      <button class="btn" id="next">▶</button>
     </div>
   </div>
+  <div class="cal-grid" id="calDow"></div>
+  <div class="cal-grid" id="calGrid"></div>
 </div>
 
-<!-- MODAL -->
 <div class="modal" id="dayModal">
   <div class="sheet">
     <h3 id="modalTitle">Reservas do dia</h3>
-    <div class="list" id="modalList"></div>
+    <div id="modalList"></div>
   </div>
 </div>
 
@@ -140,23 +95,24 @@ if(localStorage.getItem("acessoCozinha")!=="ok"){
   window.location.href="index.html";
 }
 
-/* ===== Config ===== */
+/* ===== Configuração ===== */
 const endpoint="https://script.google.com/macros/s/AKfycbwE-0oOl4wGHz7gFXHIgYHNihCTW4-uzUjGv_iLvPSWX1sma8pi9eJIwx1K4grFOILj/exec";
 const $=(s,el=document)=>el.querySelector(s);
-const formatBRL=n=>Number(n||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
-const parseBRL=v=>Number(String(v).replace(/[^\d,]/g,'').replace(',','.'))||0;
-const ymd=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 const monthNames=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const dow=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
 const state={mes:(new Date()).getMonth(),ano:(new Date()).getFullYear(),reservas:[]};
 
-/* ===== Calendário ===== */
+/* ===== Funções utilitárias ===== */
+const ymd=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+
+/* ===== Construção do calendário ===== */
 const calTitle=$('#calTitle'),calDow=$('#calDow'),calGrid=$('#calGrid');
-calDow.innerHTML=dow.map(d=>`<div class="cal-dow">${d}</div>`).join('');
+calDow.innerHTML=dow.map(d=>`<div class='cal-dow'>${d}</div>`).join('');
 
 async function listar(ano,mes){
   const res=await fetch(`${endpoint}?acao=listar&ano=${ano}&mes=${mes+1}`);
-  const data=await res.json();return Array.isArray(data)?data:[];
+  const data=await res.json();
+  return Array.isArray(data)?data:[];
 }
 
 function buildCalendar(){
@@ -166,7 +122,6 @@ function buildCalendar(){
   const first=new Date(ano,mes,1);
   const start=new Date(first);
   start.setDate(1-((first.getDay()+7)%7));
-
   for(let i=0;i<42;i++){
     const d=new Date(start);d.setDate(start.getDate()+i);
     const inMonth=d.getMonth()===mes;
@@ -174,64 +129,65 @@ function buildCalendar(){
     cell.className='cal-day'+(inMonth?'':' out');
     const items=state.reservas.filter(r=>r.datahora && ymd(new Date(r.datahora))===ymd(d));
     const groups=new Map();
-    for(const r of items){const k=(r.mesa||'—').toUpperCase();groups.set(k,{label:r.mesa||'—',count:(groups.get(k)?.count||0)+1});}
+    for(const r of items){
+      const k=(r.mesa||'—').toUpperCase();
+      groups.set(k,{label:r.mesa||'—',count:(groups.get(k)?.count||0)+1});
+    }
     const tags=[...groups.entries()].map(([k,v])=>{
-      const vip=k.includes('VIP');const css=vip?'t-vip':'t-outros';
+      const vip=k.includes('VIP');
+      const css=vip?'t-vip':'t-outros';
       return `<span class='tag ${css}'>${v.count} ${v.label}</span>`;
     }).join('');
     const pend=items.filter(r=>(r.status||'Pendente')!=='Concluída').length;
     const done=items.filter(r=>r.status==='Concluída').length;
-    cell.innerHTML=`<div class='num'>${d.getDate()}</div><div class='tags'>${tags}${pend?`<span class='tag t-pend'>Pend: ${pend}</span>`:''}${done?`<span class='tag t-done'>Conc: ${done}</span>`:''}</div>`;
+    cell.innerHTML=`<div class='num'>${d.getDate()}</div>
+      <div class='tags'>
+        ${tags}
+        ${pend?`<span class='tag t-pend'>Pend: ${pend}</span>`:''}
+        ${done?`<span class='tag t-done'>Conc: ${done}</span>`:''}
+      </div>`;
     cell.addEventListener('click',()=>abrirModal(d,items));
     calGrid.appendChild(cell);
   }
 }
 
-/* ===== Modal ===== */
+/* ===== Modal de reservas ===== */
 function abrirModal(date,items){
-  const m=document.getElementById("dayModal");
-  const list=document.getElementById("modalList");
-  document.getElementById("modalTitle").textContent=`Reservas de ${date.toLocaleDateString('pt-BR')}`;
-  list.innerHTML=items.length?items.map(r=>`
-    <div class='res-item'>
-      <div class='name'>${r.nome||'—'}</div>
-      <div class='meta'>${new Date(r.datahora).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})} • ${r.mesa||'—'} • ${r.pessoas||'0'} pessoa(s)</div>
-      <div class='meta'><b>Telefone:</b> ${r.telefone||'—'}</div>
-      <div class='meta'><b>Cardápio:</b> ${r.cardapio||'—'}</div>
-      <div class='meta'><b>Status:</b> ${r.status||'Pendente'}</div>
-      <div class='meta'><b>Obs:</b> ${r.observacoes||'—'}</div>
-    </div>`).join(''):'<div class="meta">Nenhuma reserva neste dia.</div>';
-  m.classList.add("show");
+  const modal=$('#dayModal');
+  const list=$('#modalList');
+  $('#modalTitle').textContent=`Reservas de ${date.toLocaleDateString('pt-BR')}`;
+  if(!items.length){
+    list.innerHTML="<div class='res-item'><div class='meta'>Nenhuma reserva neste dia.</div></div>";
+  }else{
+    list.innerHTML=items.map(r=>`
+      <div class='res-item'>
+        <div class='name'>${r.nome||'—'}</div>
+        <div class='meta'>${new Date(r.datahora).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})} • ${r.mesa||'—'} • ${r.pessoas||'0'} pessoa(s)</div>
+        <div class='meta'><b>Cardápio:</b> ${r.cardapio||'—'}</div>
+        <div class='meta'><b>Status:</b> ${r.status||'Pendente'}</div>
+        <div class='meta'><b>Obs:</b> ${r.observacoes||'—'}</div>
+      </div>`).join('');
+  }
+  modal.classList.add('show');
 }
-document.getElementById("dayModal").addEventListener("click",e=>{if(e.target.id==="dayModal")e.target.classList.remove("show")});
-
-/* ===== Resumo ===== */
-function updateResumo(){
-  const {mes,ano}=state;
-  const inMonth=state.reservas.filter(r=>{const d=new Date(r.datahora);return d.getMonth()===mes&&d.getFullYear()===ano;});
-  const soma=(arr,fn)=>arr.reduce((a,b)=>a+fn(b),0);
-  const adiantado=soma(inMonth,r=>parseBRL(r.pagamentoAntecipado||0));
-  const finalPago=soma(inMonth,r=>parseBRL(r.valorFinalPago||0));
-  const aReceber=soma(inMonth.filter(r=>(r.status||'Pendente')!=='Concluída'),r=>{
-    const estimado=parseBRL(r.valorEstimado||0);
-    const ant=parseBRL(r.pagamentoAntecipado||0);
-    return Math.max(estimado-ant,0);
-  });
-  $('#kpiAntecipado').textContent=formatBRL(adiantado);
-  $('#kpiFinalPago').textContent=formatBRL(finalPago);
-  $('#kpiAReceber').textContent=formatBRL(aReceber);
-  $('#kpiTotalMes').textContent=formatBRL(adiantado+finalPago);
-}
+$('#dayModal').addEventListener('click',e=>{
+  if(e.target.id==='dayModal') e.target.classList.remove('show');
+});
 
 /* ===== Navegação ===== */
-$('#prevMonth').addEventListener('click',()=>{const d=new Date(state.ano,state.mes-1);state.mes=d.getMonth();state.ano=d.getFullYear();refresh();});
-$('#nextMonth').addEventListener('click',()=>{const d=new Date(state.ano,state.mes+1);state.mes=d.getMonth();state.ano=d.getFullYear();refresh();});
-$('#todayBtn').addEventListener('click',()=>{const t=new Date();state.mes=t.getMonth();state.ano=t.getFullYear();refresh();});
-$('#refreshBtn').addEventListener('click',()=>refresh());
+$('#prev').addEventListener('click',()=>{const d=new Date(state.ano,state.mes-1);state.mes=d.getMonth();state.ano=d.getFullYear();refresh();});
+$('#next').addEventListener('click',()=>{const d=new Date(state.ano,state.mes+1);state.mes=d.getMonth();state.ano=d.getFullYear();refresh();});
+$('#today').addEventListener('click',()=>{const t=new Date();state.mes=t.getMonth();state.ano=t.getFullYear();refresh();});
 
+/* ===== Atualização ===== */
 async function refresh(){
-  state.reservas=await listar(state.ano,state.mes);
-  buildCalendar();updateResumo();
+  try{
+    state.reservas=await listar(state.ano,state.mes);
+  }catch(e){
+    console.error("Erro ao carregar:",e);
+    state.reservas=[];
+  }
+  buildCalendar();
 }
 refresh();
 </script>
